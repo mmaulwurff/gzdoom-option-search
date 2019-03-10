@@ -1,0 +1,11 @@
+AddOptionMenu "OptionsMenu"
+{
+  StaticText ""
+  Submenu "Option Search" , "m8f_os_Menu"
+}
+
+OptionMenu "m8f_os_Menu"
+{
+  Class "m8f_os_Menu"
+  Title "Option Search"
+}

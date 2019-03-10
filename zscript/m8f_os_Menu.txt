@@ -1,0 +1,36 @@
+class m8f_os_Menu : OptionMenu
+{
+
+  // public: ///////////////////////////////////////////////////////////////////
+
+  override void Init(Menu parent, OptionMenuDescriptor desc)
+  {
+    listOptions("OptionsMenu");
+
+    super.Init(parent, desc);
+  }
+
+  // private: //////////////////////////////////////////////////////////////////
+
+  private void listOptions(string menuName)
+  {
+    let desc = OptionMenuDescriptor(MenuDescriptor.GetDescriptor(menuName));
+    if (desc == null) { return; }
+
+    int nItems = desc.mItems.size();
+    for (int i = 0; i < nItems; ++i)
+    {
+      let item = desc.mItems[i];
+
+      if (item is "OptionMenuItemSubMenu")
+      {
+        listOptions(item.GetAction());
+      }
+      else if (item is "OptionMenuItemOption")
+      {
+        console.printf(StringTable.Localize(item.mLabel));
+      }
+    }
+  }
+
+} // m8f_os_Menu

@@ -1,0 +1,9 @@
+*
+
+!*.txt
+!.gitignore
+!*.md
+
+!zscript
+zscript/*
+!zscript/*.txt
