@@ -1,0 +1,31 @@
+class m8f_os_SearchField : OptionMenuItemTextField
+{
+
+  // public: ///////////////////////////////////////////////////////////////////
+
+  m8f_os_SearchField Init(String label, m8f_os_Menu menu)
+  {
+    Super.Init(label, "");
+    mCVar = CVar.GetCVar("m8f_os_query");
+    mMenu = menu;
+
+    return self;
+  }
+
+  // public: ///////////////////////////////////////////////////////////////////
+
+  override bool MenuEvent(int mkey, bool fromcontroller)
+  {
+    if (mkey == Menu.MKEY_Input)
+    {
+      mMenu.search(mEnter.GetText());
+    }
+
+    return Super.MenuEvent(mkey, fromcontroller);
+  }
+
+  // private: //////////////////////////////////////////////////////////////////
+
+  private m8f_os_Menu mMenu;
+
+} // class m8f_os_SearchField
