@@ -60,7 +60,13 @@ class m8f_os_Menu : OptionMenu
 
     string path  = StringTable.Localize("$OPTMNU_TITLE");
 
-    listOptions("OptionsMenu", query, path);
+    bool found = listOptions("OptionsMenu", query, path);
+    if (!found)
+    {
+      OptionMenuItemStaticText text = new("OptionMenuItemStaticText").Init("No results found.", 0);
+      addEmptyLine(mDesc);
+      mDesc.mItems.push(text);
+    }
 
     mDesc.CalcIndent();
   }
@@ -77,14 +83,15 @@ class m8f_os_Menu : OptionMenu
     return searchField;
   }
 
-  private void listOptions(string menuName, string query, string path)
+  private bool listOptions(string menuName, string query, string path)
   {
     let desc = OptionMenuDescriptor(MenuDescriptor.GetDescriptor(menuName));
-    if (desc == null)  { return; }
-    if (desc == mDesc) { return; }
+    if (desc == null)  { return false; }
+    if (desc == mDesc) { return false; }
 
     int  nItems = desc.mItems.size();
     bool first  = true;
+    bool found  = false;
 
     for (int i = 0; i < nItems; ++i)
     {
@@ -96,6 +103,8 @@ class m8f_os_Menu : OptionMenu
 
       if (contains(label, query))
       {
+        found = true;
+
         if (first)
         {
           addEmptyLine(mDesc);
@@ -123,9 +132,11 @@ class m8f_os_Menu : OptionMenu
       if (item is "OptionMenuItemSubMenu")
       {
         string newPath = String.Format("%s/%s", path, label);
-        listOptions(item.GetAction(), query, newPath);
+        found |= listOptions(item.GetAction(), query, newPath);
       }
     }
+
+    return found;
   }
 
   private static OptionMenuItem makePathItem(string path)
