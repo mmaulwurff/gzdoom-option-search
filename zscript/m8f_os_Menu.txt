@@ -1,36 +1,24 @@
-class m8f_os_Menu : OptionMenu
+class m8f_os_SearchField : OptionMenuItemTextField
 {
 
   // public: ///////////////////////////////////////////////////////////////////
 
-  override void Init(Menu parent, OptionMenuDescriptor desc)
+  m8f_os_SearchField Init(String label, m8f_os_Menu menu)
   {
-    super.Init(parent, desc);
+    Super.Init(label, "");
+    mCVar = CVar.GetCVar("m8f_os_query");
+    mMenu = menu;
 
-    CVar.GetCVar("m8f_os_query").SetString("");
-
-    mDesc.mItems.clear();
-
-    addControls();
-
-    mDesc.mScrollPos    = 0;
-    mDesc.mSelectedItem = 0;
-    mDesc.CalcIndent();
+    return self;
   }
 
-  override bool MenuEvent (int mkey, bool fromcontroller)
+  // public: ///////////////////////////////////////////////////////////////////
+
+  override bool MenuEvent(int mkey, bool fromcontroller)
   {
-    if (mkey == MKEY_ENTER)
+    if (mkey == Menu.MKEY_Input)
     {
-      if (mDesc.mSelectedItem >= 0)
-      {
-        let item = mDesc.mItems[mDesc.mSelectedItem];
-        if (item.mLabel == searchButtonLabel)
-        {
-          search();
-          return true;
-        }
-      }
+      mMenu.search(mEnter.GetText());
     }
 
     return Super.MenuEvent(mkey, fromcontroller);
@@ -38,13 +26,38 @@ class m8f_os_Menu : OptionMenu
 
   // private: //////////////////////////////////////////////////////////////////
 
-  private void search()
+  m8f_os_Menu mMenu;
+
+} // class m8f_os_SearchField
+
+class m8f_os_Menu : OptionMenu
+{
+
+  // public: ///////////////////////////////////////////////////////////////////
+
+  override void Init(Menu parent, OptionMenuDescriptor desc)
+  {
+    Super.Init(parent, desc);
+
+    CVar.GetCVar("m8f_os_query").SetString("");
+
+    mDesc.mItems.clear();
+
+    addSearchField();
+
+    mDesc.mScrollPos    = 0;
+    mDesc.mSelectedItem = 0;
+    mDesc.CalcIndent();
+  }
+
+  // public: ///////////////////////////////////////////////////////////////////
+
+  void search(string query)
   {
     mDesc.mItems.clear();
 
-    addControls();
+    addSearchField();
 
-    string query = GetQuery();
     string path  = StringTable.Localize("$OPTMNU_TITLE");
 
     listOptions("OptionsMenu", query, path);
@@ -52,23 +65,16 @@ class m8f_os_Menu : OptionMenu
     mDesc.CalcIndent();
   }
 
-  private string getQuery()
+  // private: //////////////////////////////////////////////////////////////////
+
+  private m8f_os_SearchField addSearchField()
   {
-    string query = CVar.GetCVar("m8f_os_query").GetString();
+    let searchField = new("m8f_os_SearchField").Init(searchLabel, self);
 
-    return query;
-  }
-
-  private void addControls()
-  {
-    OptionMenuItemTextField queryField = new("OptionMenuItemTextField").Init(searchLabel, "");
-    queryField.mCVar = CVar.GetCVar("m8f_os_query");
-
-    OptionMenuItemCommand searchButton = new("OptionMenuItemCommand").Init(searchButtonLabel, "");
-
-    mDesc.mItems.push(queryField);
-    mDesc.mItems.push(searchButton);
+    mDesc.mItems.push(searchField);
     addEmptyLine(mDesc);
+
+    return searchField;
   }
 
   private void listOptions(string menuName, string query, string path)
@@ -152,8 +158,7 @@ class m8f_os_Menu : OptionMenu
     return contains;
   }
 
-  const searchLabel       = "Query";
-  const searchButtonLabel = "Search!";
+  const searchLabel       = "Search:";
   const optionSearchTitle = "Option Search";
 
 } // m8f_os_Menu
