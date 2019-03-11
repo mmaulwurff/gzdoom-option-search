@@ -98,7 +98,6 @@ class m8f_os_Menu : OptionMenu
     {
       let    item    = desc.mItems[i];
       string actionN = item.GetAction();
-      console.printf(actionN);
       string newPath = (actionN == "Optionsmenu")
         ? "Options"
         : "Main Options";
