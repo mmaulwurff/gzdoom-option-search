@@ -5,32 +5,139 @@ class m8f_os_Menu : OptionMenu
 
   override void Init(Menu parent, OptionMenuDescriptor desc)
   {
-    listOptions("OptionsMenu");
-
     super.Init(parent, desc);
+
+    CVar.GetCVar("m8f_os_query").SetString("");
+
+    mDesc.mItems.clear();
+
+    addControls();
+
+    mDesc.mSelectedItem = 0;
+  }
+
+  override bool MenuEvent (int mkey, bool fromcontroller)
+  {
+    if (mkey == MKEY_ENTER)
+    {
+      if (mDesc.mSelectedItem >= 0)
+      {
+        let item = mDesc.mItems[mDesc.mSelectedItem];
+        if (item.mLabel == searchButtonLabel)
+        {
+          search();
+          return true;
+        }
+      }
+    }
+
+    return Super.MenuEvent(mkey, fromcontroller);
   }
 
   // private: //////////////////////////////////////////////////////////////////
 
-  private void listOptions(string menuName)
+  private void search()
+  {
+    mDesc.mItems.clear();
+
+    addControls();
+
+    string query = GetQuery();
+    string path  = StringTable.Localize("$OPTMNU_TITLE");
+
+    listOptions("OptionsMenu", query, path);
+
+    mDesc.CalcIndent();
+  }
+
+  private string getQuery()
+  {
+    string query = CVar.GetCVar("m8f_os_query").GetString();
+
+    return query;
+  }
+
+  private void addControls()
+  {
+    OptionMenuItemTextField queryField = new("OptionMenuItemTextField").Init(searchLabel, "");
+    queryField.mCVar = CVar.GetCVar("m8f_os_query");
+
+    OptionMenuItemCommand searchButton = new("OptionMenuItemCommand").Init(searchButtonLabel, "");
+
+    mDesc.mItems.push(queryField);
+    mDesc.mItems.push(searchButton);
+    addEmptyLine(mDesc);
+  }
+
+  private void listOptions(string menuName, string query, string path)
   {
     let desc = OptionMenuDescriptor(MenuDescriptor.GetDescriptor(menuName));
-    if (desc == null) { return; }
+    if (desc == null)  { return; }
+    if (desc == mDesc) { return; }
 
-    int nItems = desc.mItems.size();
+    int  nItems = desc.mItems.size();
+    bool first  = true;
+
     for (int i = 0; i < nItems; ++i)
     {
-      let item = desc.mItems[i];
+      let    item  = desc.mItems[i];
+      string label = StringTable.Localize(item.mLabel);
 
       if (item is "OptionMenuItemSubMenu")
       {
-        listOptions(item.GetAction());
+        string newPath = String.Format("%s/%s", path, label);
+        listOptions(item.GetAction(), query, newPath);
       }
       else if (item is "OptionMenuItemOption")
       {
-        console.printf(StringTable.Localize(item.mLabel));
+        if (contains(label, query))
+        {
+          if (first)
+          {
+            mDesc.mItems.push(makePathItem(path));
+            first = false;
+          }
+
+          OptionMenuItemOptionBase(item).mCenter = false;
+          mDesc.mItems.push(item);
+        }
       }
     }
+
+    addEmptyLine(mDesc);
   }
+
+  private static OptionMenuItem makePathItem(string path)
+  {
+    OptionMenuItemStaticText text = new("OptionMenuItemStaticText").Init(path, 1);
+
+    return text;
+  }
+
+  private static void addEmptyLine(OptionMenuDescriptor desc)
+  {
+    int nItems = desc.mItems.size();
+    if (nItems > 0)
+    {
+      let staticText = OptionMenuItemStaticText(desc.mItems[nItems - 1]);
+      if (staticText != null && staticText.mLabel == "") { return; }
+    }
+
+    let item = new("OptionMenuItemStaticText").Init("");
+    desc.mItems.push(item);
+  }
+
+  private bool contains(string str, string substr)
+  {
+    str   .toLower();
+    substr.toLower();
+
+    bool contains = (str.IndexOf(substr) != -1);
+
+    return contains;
+  }
+
+  const searchLabel       = "Query";
+  const searchButtonLabel = "Search!";
 
 } // m8f_os_Menu

@@ -4,6 +4,8 @@
 !.gitignore
 !*.md
 
+changelog.txt
+
 !zscript
 zscript/*
 !zscript/*.txt
