@@ -13,7 +13,9 @@ class m8f_os_Menu : OptionMenu
 
     addControls();
 
+    mDesc.mScrollPos    = 0;
     mDesc.mSelectedItem = 0;
+    mDesc.CalcIndent();
   }
 
   override bool MenuEvent (int mkey, bool fromcontroller)
@@ -80,31 +82,44 @@ class m8f_os_Menu : OptionMenu
 
     for (int i = 0; i < nItems; ++i)
     {
+      let item = desc.mItems[i];
+
+      if (item is "OptionMenuItemStaticText") { continue; }
+
+      string label = StringTable.Localize(item.mLabel);
+
+      if (contains(label, query))
+      {
+        if (first)
+        {
+          addEmptyLine(mDesc);
+          mDesc.mItems.push(makePathItem(path));
+          first = false;
+        }
+
+        let itemOptionBase = OptionMenuItemOptionBase(item);
+        if (itemOptionBase)
+        {
+          itemOptionBase.mCenter = false;
+        }
+
+        mDesc.mItems.push(item);
+      }
+    }
+
+    for (int i = 0; i < nItems; ++i)
+    {
       let    item  = desc.mItems[i];
       string label = StringTable.Localize(item.mLabel);
+
+      if (label == optionSearchTitle) { continue; }
 
       if (item is "OptionMenuItemSubMenu")
       {
         string newPath = String.Format("%s/%s", path, label);
         listOptions(item.GetAction(), query, newPath);
       }
-      else if (item is "OptionMenuItemOption")
-      {
-        if (contains(label, query))
-        {
-          if (first)
-          {
-            mDesc.mItems.push(makePathItem(path));
-            first = false;
-          }
-
-          OptionMenuItemOptionBase(item).mCenter = false;
-          mDesc.mItems.push(item);
-        }
-      }
     }
-
-    addEmptyLine(mDesc);
   }
 
   private static OptionMenuItem makePathItem(string path)
@@ -139,5 +154,6 @@ class m8f_os_Menu : OptionMenu
 
   const searchLabel       = "Query";
   const searchButtonLabel = "Search!";
+  const optionSearchTitle = "Option Search";
 
 } // m8f_os_Menu
