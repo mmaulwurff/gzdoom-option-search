@@ -31,6 +31,17 @@ class m8f_os_Query
 
   bool matches(string text)
   {
+    bool isSearchForAny = CVar.GetCVar("m8f_os_is_any_of").GetBool();
+
+    return isSearchForAny
+      ? matchesAny(text)
+      : matchesAll(text);
+  }
+
+  // private: //////////////////////////////////////////////////////////////////
+
+  private bool matchesAny(string text)
+  {
     int nParts = mQueryParts.size();
 
     for (int i = 0; i < nParts; ++i)
@@ -46,7 +57,22 @@ class m8f_os_Query
     return false;
   }
 
-  // private: //////////////////////////////////////////////////////////////////
+  private bool matchesAll(string text)
+  {
+    int nParts = mQueryParts.size();
+
+    for (int i = 0; i < nParts; ++i)
+    {
+      string queryPart = mQueryParts[i];
+
+      if (!contains(text, queryPart))
+      {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   private static bool contains(string str, string substr)
   {

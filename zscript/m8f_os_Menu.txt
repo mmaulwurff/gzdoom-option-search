@@ -63,8 +63,11 @@ class m8f_os_Menu : OptionMenu
   private m8f_os_SearchField addSearchField()
   {
     let searchField = new("m8f_os_SearchField").Init(searchLabel, self);
-
     mDesc.mItems.push(searchField);
+
+    let anyAllOption = new("OptionMenuItemOption").Init("", "m8f_os_is_any_of", "m8f_os_is_any_of_values");
+    mDesc.mItems.push(anyAllOption);
+
     addEmptyLine(mDesc);
 
     return searchField;
