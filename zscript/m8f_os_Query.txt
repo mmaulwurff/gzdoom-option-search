@@ -17,37 +17,49 @@
 //
 //-----------------------------------------------------------------------------
 
-class m8f_os_SearchField : OptionMenuItemTextField
+class m8f_os_Query
 {
 
   // public: ///////////////////////////////////////////////////////////////////
 
-  m8f_os_SearchField Init(String label, m8f_os_Menu menu)
+  static m8f_os_Query fromString(string str)
   {
-    Super.Init(label, "");
-    mCVar = CVar.GetCVar("m8f_os_query");
-    mMenu = menu;
-
-    return self;
+    let query = new("m8f_os_Query");
+    str.Split(query.mQueryParts, " ", TOK_SKIPEMPTY);
+    return query;
   }
 
-  // public: ///////////////////////////////////////////////////////////////////
-
-  override bool MenuEvent(int mkey, bool fromcontroller)
+  bool matches(string text)
   {
-    if (mkey == Menu.MKEY_Input)
-    {
-      string text  = mEnter.GetText();
-      let    query = m8f_os_Query.fromString(text);
+    int nParts = mQueryParts.size();
 
-      mMenu.search(query);
+    for (int i = 0; i < nParts; ++i)
+    {
+      string queryPart = mQueryParts[i];
+
+      if (contains(text, queryPart))
+      {
+        return true;
+      }
     }
 
-    return Super.MenuEvent(mkey, fromcontroller);
+    return false;
   }
 
   // private: //////////////////////////////////////////////////////////////////
 
-  private m8f_os_Menu mMenu;
+  private static bool contains(string str, string substr)
+  {
+    str   .toLower();
+    substr.toLower();
 
-} // class m8f_os_SearchField
+    bool contains = (str.IndexOf(substr) != -1);
+
+    return contains;
+  }
+
+  // private: //////////////////////////////////////////////////////////////////
+
+  private Array<String> mQueryParts;
+
+} // m8f_os_Query

@@ -39,7 +39,7 @@ class m8f_os_Menu : OptionMenu
 
   // public: ///////////////////////////////////////////////////////////////////
 
-  void search(string query)
+  void search(m8f_os_Query query)
   {
     mDesc.mItems.clear();
 
@@ -70,7 +70,7 @@ class m8f_os_Menu : OptionMenu
     return searchField;
   }
 
-  private bool listOptions(string menuName, string query, string path)
+  private bool listOptions(string menuName, m8f_os_Query query, string path)
   {
     let desc = MenuDescriptor.GetDescriptor(menuName);
 
@@ -89,7 +89,7 @@ class m8f_os_Menu : OptionMenu
     return false;
   }
 
-  private bool listOptionsListMenu(ListMenuDescriptor desc, string query, string path)
+  private bool listOptionsListMenu(ListMenuDescriptor desc, m8f_os_Query query, string path)
   {
     int  nItems = desc.mItems.size();
     bool found  = false;
@@ -108,7 +108,7 @@ class m8f_os_Menu : OptionMenu
     return found;
   }
 
-  private bool listOptionsOptionMenu(OptionMenuDescriptor desc, string query, string path)
+  private bool listOptionsOptionMenu(OptionMenuDescriptor desc, m8f_os_Query query, string path)
   {
     if (desc == mDesc) { return false; }
 
@@ -124,7 +124,7 @@ class m8f_os_Menu : OptionMenu
 
       string label = StringTable.Localize(item.mLabel);
 
-      if (contains(label, query))
+      if (query.matches(label))
       {
         found = true;
 
@@ -201,16 +201,6 @@ class m8f_os_Menu : OptionMenu
 
     let item = new("OptionMenuItemStaticText").Init("");
     desc.mItems.push(item);
-  }
-
-  private static bool contains(string str, string substr)
-  {
-    str   .toLower();
-    substr.toLower();
-
-    bool contains = (str.IndexOf(substr) != -1);
-
-    return contains;
   }
 
   // private: //////////////////////////////////////////////////////////////////
