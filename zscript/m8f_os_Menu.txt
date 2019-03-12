@@ -131,7 +131,7 @@ class m8f_os_Menu : OptionMenu
         if (first)
         {
           addEmptyLine(mDesc);
-          mDesc.mItems.push(makePathItem(path));
+          addPathItem(mDesc, path);
           first = false;
         }
 
@@ -154,7 +154,7 @@ class m8f_os_Menu : OptionMenu
 
       if (item is "OptionMenuItemSubMenu")
       {
-        string newPath = String.Format("%s/%s", path, label);
+        string newPath = makePath(path, label);
         found |= listOptions(item.GetAction(), query, newPath);
       }
     }
@@ -164,11 +164,30 @@ class m8f_os_Menu : OptionMenu
 
   // private: //////////////////////////////////////////////////////////////////
 
-  private static OptionMenuItem makePathItem(string path)
+  private static string makePath(string path, string label)
   {
-    OptionMenuItemStaticText text = new("OptionMenuItemStaticText").Init(path, 1);
+    int    pathWidth   = SmallFont.StringWidth(path .. "/" .. label);
+    int    screenWidth = Screen.GetWidth();
+    bool   isTooWide   = (pathWidth > screenWidth / 3);
+    string newPath     = isTooWide
+      ? path .. "/" .. "\n" .. label
+      : path .. "/" ..         label;
 
-    return text;
+    return newPath;
+  }
+
+  private void addPathItem(OptionMenuDescriptor desc, string path)
+  {
+    Array<String> lines;
+    path.split(lines, "\n");
+    int nLines = lines.size();
+
+    for (int i = 0; i < nLines; ++i)
+    {
+      OptionMenuItemStaticText text = new("OptionMenuItemStaticText").Init(lines[i], 1);
+
+      mDesc.mItems.push(text);
+    }
   }
 
   private static void addEmptyLine(OptionMenuDescriptor desc)
