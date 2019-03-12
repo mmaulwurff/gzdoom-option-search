@@ -1,0 +1,8 @@
+[enu default]
+
+M8F_OS_TITLE      = "Option Search";
+M8F_OS_ANY        = "Search for any terms";
+M8F_OS_ALL        = "Search for all terms";
+M8F_OS_MAIN       = "Main Options";
+M8F_OS_NO_RESULTS = "No results found.";
+M8F_OS_LABEL      = "Search:";

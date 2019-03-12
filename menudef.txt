@@ -1,17 +1,17 @@
 AddOptionMenu "OptionsMenu"
 {
   StaticText  ""
-  Submenu     "Option Search" , "m8f_os_Menu"
+  Submenu     "$M8F_OS_TITLE" , "m8f_os_Menu"
 }
 
 OptionMenu    "m8f_os_Menu"
 {
   Class       "m8f_os_Menu"
-  Title       "Option Search"
+  Title       "$M8F_OS_TITLE"
 }
 
 OptionValue   "m8f_os_is_any_of_values"
 {
-  0,          "Search for all terms"
-  1,          "Search for any terms"
+  0,          "$M8F_OS_ALL"
+  1,          "$M8F_OS_ANY"
 }

@@ -50,7 +50,8 @@ class m8f_os_Menu : OptionMenu
 
     if (!found)
     {
-      OptionMenuItemStaticText text = new("OptionMenuItemStaticText").Init("No results found.", 0);
+      string noResults = StringTable.Localize("$M8F_OS_NO_RESULTS");
+      let    text      = new("OptionMenuItemStaticText").Init(noResults, 0);
       addEmptyLine(mDesc);
       mDesc.mItems.push(text);
     }
@@ -62,7 +63,8 @@ class m8f_os_Menu : OptionMenu
 
   private m8f_os_SearchField addSearchField()
   {
-    let searchField = new("m8f_os_SearchField").Init(searchLabel, self);
+    string searchLabel = StringTable.Localize("$M8F_OS_LABEL");
+    let    searchField = new("m8f_os_SearchField").Init(searchLabel, self);
     mDesc.mItems.push(searchField);
 
     let anyAllOption = new("OptionMenuItemOption").Init("", "m8f_os_is_any_of", "m8f_os_is_any_of_values");
@@ -102,8 +104,8 @@ class m8f_os_Menu : OptionMenu
       let    item    = desc.mItems[i];
       string actionN = item.GetAction();
       string newPath = (actionN == "Optionsmenu")
-        ? "Options"
-        : "Main Options";
+        ? StringTable.Localize("$OPTMNU_TITLE")
+        : StringTable.Localize("$M8F_OS_MAIN");
 
       found |= listOptions(actionN, query, newPath);
     }
@@ -153,6 +155,7 @@ class m8f_os_Menu : OptionMenu
       let    item  = desc.mItems[i];
       string label = StringTable.Localize(item.mLabel);
 
+      string optionSearchTitle = StringTable.Localize("$M8F_OS_TITLE");
       if (label == optionSearchTitle) { continue; }
 
       if (item is "OptionMenuItemSubMenu")
@@ -205,10 +208,5 @@ class m8f_os_Menu : OptionMenu
     let item = new("OptionMenuItemStaticText").Init("");
     desc.mItems.push(item);
   }
-
-  // private: //////////////////////////////////////////////////////////////////
-
-  const searchLabel       = "Search:";
-  const optionSearchTitle = "Option Search";
 
 } // m8f_os_Menu

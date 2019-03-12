@@ -3,9 +3,12 @@
 !*.txt
 !.gitignore
 !*.md
+!language.*
 
 changelog.txt
 
 !zscript
 zscript/*
 !zscript/*.txt
+
+*~
