@@ -4,6 +4,7 @@
 !*.zs
 !.gitignore
 !*.md
+!*.sh
 !language.*
 
 changelog.txt
