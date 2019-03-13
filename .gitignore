@@ -1,6 +1,7 @@
 *
 
 !*.txt
+!*.zs
 !.gitignore
 !*.md
 !language.*
@@ -9,6 +10,6 @@ changelog.txt
 
 !zscript
 zscript/*
-!zscript/*.txt
+!zscript/*.zs
 
 *~

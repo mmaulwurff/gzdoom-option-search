@@ -19,6 +19,6 @@ version "3.7"
 //
 //-----------------------------------------------------------------------------
 
-#include "zscript/m8f_os_Menu.txt"
-#include "zscript/m8f_os_SearchField.txt"
-#include "zscript/m8f_os_Query.txt"
+#include "zscript/m8f_os_Menu.zs"
+#include "zscript/m8f_os_SearchField.zs"
+#include "zscript/m8f_os_Query.zs"
